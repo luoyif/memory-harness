@@ -2,7 +2,23 @@
 
 **本地优先、可编排、可审计的长期记忆工作台。** 让人和不同 AI 在同一个项目边界内保存原材料、沉淀长期记忆、检索来源、处理待办，并按需 DIY 自己的记忆流程。
 
+[![Release](https://img.shields.io/github/v/release/luoyif/memory-harness?include_prereleases&label=release)](https://github.com/luoyif/memory-harness/releases)
+[![CI](https://github.com/luoyif/memory-harness/actions/workflows/ci.yml/badge.svg)](https://github.com/luoyif/memory-harness/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/luoyif/memory-harness)](LICENSE)
+
 [English](#english) · [中文使用手册](docs/USER_GUIDE.zh-CN.md) · [MCP 接入](docs/MCP.md) · [权限说明](docs/PERMISSIONS.md) · [安全说明](SECURITY.md)
+
+<p align="center">
+  <a href="https://github.com/luoyif/memory-harness/releases/download/v2.2.0/Memory-Harness-2.2.0-product-tour-zh-CN.mp4">
+    <img src="docs/media/video-cover.jpg" width="100%" alt="Memory Harness 2.2.0 两分钟中文功能导览">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/luoyif/memory-harness/releases/download/v2.2.0/Memory-Harness-2.2.0-product-tour-zh-CN.mp4">▶ 观看两分钟中文功能导览</a>
+  ·
+  <a href="https://github.com/luoyif/memory-harness/releases">下载 Windows / macOS 完整包</a>
+</p>
 
 > 当前版本：**2.2.0 Public Preview**。Windows x64 和 Intel macOS 已有真实运行验收；macOS 安装包包含 Intel 与 Apple Silicon 两种架构，但 Apple Silicon 本轮仅完成结构校验。公开包尚未使用 Apple Developer ID、公证或 Windows Authenticode 签名，系统可能显示安全提示。请先阅读 Release 中的安装说明。
 
@@ -20,6 +36,59 @@
 - **允许 DIY**：Blueprint、Pipeline、插件和类型合同可以替换或扩展记忆处理方式。
 - **多 AI 有边界**：每个 Agent 有独立身份、项目授权和权限；私密草稿不会自动共享。
 - **本地优先**：SQLite、JSONL、FTS 和本地嵌入都在设备上；只有主动启用模型模式时，选中的原材料才会发送到所配置的模型服务。
+
+## 界面导览
+
+<table>
+  <tr>
+    <td width="50%">
+      <a href="docs/media/01-memory-overview.jpg"><img src="docs/media/01-memory-overview.jpg" alt="记忆总览与今日待办"></a><br>
+      <strong>先看到今天要做什么</strong><br>
+      首页集中展示待办、审核和当前记忆状态，并提供新建空间与导入入口。
+    </td>
+    <td width="50%">
+      <a href="docs/media/02-memory-library.jpg"><img src="docs/media/02-memory-library.jpg" alt="六层可追溯记忆库"></a><br>
+      <strong>从原材料到可复用能力</strong><br>
+      六层结果都能追溯来源；默认只处理新增、变化或失败的原材料。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <a href="docs/media/03-project-workspace.jpg"><img src="docs/media/03-project-workspace.jpg" alt="项目工作台"></a><br>
+      <strong>在项目里处理待办和建议</strong><br>
+      人工待办直接生效，AI 行动项先进入建议区，由用户确认后再执行。
+    </td>
+    <td width="50%">
+      <a href="docs/media/04-ai-collaboration.jpg"><img src="docs/media/04-ai-collaboration.jpg" alt="多 AI 协作"></a><br>
+      <strong>多 AI 协作，但草稿彼此隔离</strong><br>
+      只有主动提交的内容会共享；冲突和长期保存仍由 Owner 决定。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <a href="docs/media/05-strategy-blueprint.jpg"><img src="docs/media/05-strategy-blueprint.jpg" alt="记忆策略 Blueprint"></a><br>
+      <strong>整套记忆方式可以 DIY</strong><br>
+      内置主流记忆方案开箱即用，也可以替换层级、策略、参数与插件。
+    </td>
+    <td width="50%">
+      <a href="docs/media/06-pipeline-studio.jpg"><img src="docs/media/06-pipeline-studio.jpg" alt="处理流程编辑器"></a><br>
+      <strong>每一条处理流程也可以 DIY</strong><br>
+      自定义导入、提取、验证和写入步骤，先 Dry Run，再发布不可变版本。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <a href="docs/media/07-models-and-agents.jpg"><img src="docs/media/07-models-and-agents.jpg" alt="模型与 Agent 权限"></a><br>
+      <strong>模型和 Agent 分开配置</strong><br>
+      Codex、ChatGPT 与其他 Agent 使用独立身份、项目范围和最小权限。
+    </td>
+    <td width="50%">
+      <a href="docs/media/08-operation-manual.jpg"><img src="docs/media/08-operation-manual.jpg" alt="应用内操作手册"></a><br>
+      <strong>不会用时，应用内直接查看</strong><br>
+      操作手册说明每个功能能做什么、怎么操作、系统会做什么以及安全边界。
+    </td>
+  </tr>
+</table>
 
 ## 主要能力
 
