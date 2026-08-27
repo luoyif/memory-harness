@@ -1,0 +1,32 @@
+[
+  {
+    "id": "browser-import-conversation",
+    "title": "AI 历史会话导入验收",
+    "create_time": 1787260000,
+    "update_time": 1787260100,
+    "current_node": "assistant-current",
+    "mapping": {
+      "root": {"id": "root", "parent": "", "message": null},
+      "user": {
+        "id": "user",
+        "parent": "root",
+        "message": {
+          "id": "user-message",
+          "author": {"role": "user"},
+          "create_time": 1787260001,
+          "content": {"content_type": "text", "parts": ["如何构建可追溯的时间记忆？"]}
+        }
+      },
+      "assistant-current": {
+        "id": "assistant-current",
+        "parent": "user",
+        "message": {
+          "id": "assistant-message",
+          "author": {"role": "assistant"},
+          "create_time": 1787260002,
+          "content": {"content_type": "text", "parts": ["使用有效时间与记录时间，并保留被取代事实的来源。"]}
+        }
+      }
+    }
+  }
+]

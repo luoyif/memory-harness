@@ -1,0 +1,22 @@
+{
+  "schema_version": "memory-harness.context-capability-set/v1alpha1",
+  "capability_set_id": "caps-fixture-1",
+  "adapter_id": "fixture-adapter",
+  "runtime": "generic-harness",
+  "protocol_version": "1",
+  "transport": "mcp",
+  "capabilities": [
+    "recall",
+    "capture"
+  ],
+  "max_context_items": 64,
+  "max_item_bytes": 65536,
+  "max_total_bytes": 1048576,
+  "max_concurrent": 4,
+  "supports_streaming": false,
+  "supports_idempotency": true,
+  "retention": {
+    "mode": "session",
+    "redaction": "supported"
+  }
+}

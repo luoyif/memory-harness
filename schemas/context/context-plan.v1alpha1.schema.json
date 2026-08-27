@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextPlan",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "plan_id",
+    "project_id",
+    "agent_id",
+    "request_fingerprint",
+    "budget",
+    "items",
+    "idempotency_key",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "memory-harness.context-plan/v1alpha1"
+    },
+    "plan_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "request_fingerprint": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "blueprint_id": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "blueprint_version": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "blueprint_hash": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_chars": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_latency_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_cost_minor": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "required": [
+          "item_id",
+          "source_kind",
+          "source_id",
+          "content_hash",
+          "project_id",
+          "reason_codes",
+          "priority",
+          "presentation"
+        ],
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "source_kind": {
+            "enum": [
+              "object",
+              "evidence"
+            ]
+          },
+          "source_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "content_hash": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "project_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "reason_codes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "token_estimate": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "presentation": {
+            "enum": [
+              "summary",
+              "verbatim",
+              "profile",
+              "skill_index",
+              "object"
+            ]
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_until": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ttl_seconds": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "policy_labels": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          "source_refs": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "type": "string",
+              "maxLength": 300
+            }
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "source_kind": {
+                  "const": "object"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "revision"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "correlation": {
+      "type": "object",
+      "properties": {
+        "external_runtime": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "external_protocol_version": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "external_thread_id": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "external_turn_id": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "external_item_id": {
+          "type": "string",
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "plan_hash": {
+      "type": "string",
+      "maxLength": 200
+    }
+  },
+  "additionalProperties": false
+}

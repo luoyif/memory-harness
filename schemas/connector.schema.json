@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "memoryos:connector:0.3",
+  "title": "MemoryOS Connector",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["connector_id", "kind", "name", "status", "project_id", "created_at", "updated_at"],
+  "properties": {
+    "connector_id": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["manual", "chatgpt", "codex", "claude", "gemini", "deepseek", "file", "browser", "llm-wiki", "generic-json"]},
+    "name": {"type": "string", "minLength": 1, "maxLength": 120},
+    "status": {"enum": ["active", "paused", "error"]},
+    "project_id": {"type": "string", "minLength": 1},
+    "cursor": {"type": ["string", "null"]},
+    "last_sync_at": {"type": ["string", "null"], "format": "date-time"},
+    "last_error": {"type": ["string", "null"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "memoryos:evidence-envelope:0.1",
+  "title": "MemoryOS Evidence Envelope",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "evidence_id",
+    "source_system",
+    "captured_at",
+    "content",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "evidence_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_system": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_account": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "external_conversation_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "external_message_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parent_evidence_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "role": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "observed_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "captured_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "content": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "attachment_hash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "capture_method"
+      ],
+      "properties": {
+        "capture_method": {
+          "type": "string"
+        },
+        "raw_batch_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_hash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parser": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parser_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "scope_hints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "visibility": {
+      "enum": [
+        "private",
+        "shared",
+        "global",
+        "restricted"
+      ]
+    },
+    "parse_warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

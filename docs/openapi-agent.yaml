@@ -1,0 +1,556 @@
+openapi: 3.1.0
+info:
+  title: MemoryOS Governed Agent API
+  version: 1.2.0-agent-collaboration
+  description: Project-scoped HTTP surface used by the MemoryOS MCP bridge, plus local owner configuration endpoints.
+servers:
+  - url: http://127.0.0.1:19777
+tags:
+  - name: Agent
+  - name: Owner
+paths:
+  /v1/agent/me:
+    get:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Inspect the authenticated Agent and effective grants
+      responses:
+        '200': {description: Active principal, content: {application/json: {schema: {$ref: '#/components/schemas/Principal'}}}}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /v1/agent/projects:
+    get:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: List granted project spaces
+      description: Requires project.read. Budget and finance fields are redacted unless finance.read is also granted.
+      responses:
+        '200': {description: Granted project summaries}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/agent/projects/{project_id}/context:
+    get:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Read bounded project context
+      description: Requires project.read and a project grant. Finance entries additionally require finance.read.
+      parameters:
+        - {$ref: '#/components/parameters/ProjectPath'}
+        - {name: as_of, in: query, schema: {type: string, format: date-time}}
+      responses:
+        '200': {description: Project context}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/agent/projects/{project_id}/blueprint:
+    get:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Read the project's active Memory Blueprint
+      description: Requires project.read and a project grant. Returns immutable strategy bindings, policy, content hash and validation without permitting mutation.
+      parameters:
+        - {$ref: '#/components/parameters/ProjectPath'}
+      responses:
+        '200': {description: Effective project Memory Blueprint}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/agent/search:
+    post:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Search immutable Evidence in one project
+      description: Requires memory.read and a project grant. Server overrides any supplied scope with the registered project scope.
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/AgentSearch'}}}
+      responses:
+        '200': {description: Evidence search result}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/agent/recall:
+    post:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Recall across governed memory and project records
+      description: Requires memory.read. Finance kinds also require finance.read. all_projects requires an explicit all-project grant.
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/Recall'}}}
+      responses:
+        '200': {description: Unified recall result}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/agent/evidence/{evidence_id}:
+    get:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Read one exact immutable Evidence envelope
+      parameters:
+        - {name: evidence_id, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Canonical Evidence envelope, content: {application/json: {schema: {type: object}}}}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {description: Evidence not found}
+  /v1/agent/capture:
+    post:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Append Evidence and run governed distillation
+      description: Requires memory.capture and a project grant. The idempotency key is namespaced by Agent identity.
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/Capture'}}}
+      responses:
+        '200': {description: Semantically identical idempotent retry; original Evidence is returned and the pipeline is not rerun}
+        '201': {description: Canonical Evidence created}
+        '409': {description: Same stable ID with conflicting canonical content}
+  /v1/agent/team/tasks:
+    get:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: List active collaboration tasks directly assigned to this Agent
+      description: Memory Harness does not launch external AI. Only direct membership, project grant and unexpired tasks are returned.
+      responses:
+        '200': {description: Directly assigned collaboration tasks}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/agent/team/tasks/{task_id}/private:
+    get:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Read this Agent's private task drafts
+      description: Requires team.private. Bodies authored by every other Agent remain hidden, including from the normal Owner collaboration page.
+      parameters:
+        - {$ref: '#/components/parameters/TaskPath'}
+      responses:
+        '200': {description: This Agent's unexpired private drafts}
+        '403': {$ref: '#/components/responses/Forbidden'}
+    post:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Write an expiring private task draft
+      description: Requires team.private and direct task membership.
+      parameters:
+        - {$ref: '#/components/parameters/TaskPath'}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/TeamContribution'}}}
+      responses:
+        '200': {description: Idempotent duplicate}
+        '201': {description: Private draft created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/agent/team/tasks/{task_id}/blackboard:
+    get:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Read self-authored or directly shared task contributions
+      description: Requires team.blackboard.read. Entries not authored by or directly shared to this Agent remain hidden.
+      parameters:
+        - {$ref: '#/components/parameters/TaskPath'}
+      responses:
+        '200': {description: Visible unexpired blackboard entries}
+        '403': {$ref: '#/components/responses/Forbidden'}
+    post:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Submit a task contribution with explicit direct recipients
+      description: Requires team.blackboard.write; non-empty recipients additionally require team.blackboard.share. Conflicting claims create Owner review and never overwrite each other.
+      parameters:
+        - {$ref: '#/components/parameters/TaskPath'}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/TeamBlackboardContribution'}}}
+      responses:
+        '201': {description: Shared contribution created, with any detected conflicts}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/agent/team/blackboard/{entry_id}/share:
+    post:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Replace direct recipients of this Agent's own contribution
+      description: Requires team.blackboard.share. A recipient cannot forward another Agent's entry.
+      parameters:
+        - {$ref: '#/components/parameters/EntryPath'}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/TeamShare'}}}
+      responses:
+        '200': {description: Recipient list updated}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/agent/team/tasks/{task_id}/leave-proposal:
+    post:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Propose leaving an assigned collaboration task
+      description: Creates an Owner review and does not change membership immediately.
+      parameters:
+        - {$ref: '#/components/parameters/TaskPath'}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/TeamLeaveProposal'}}}
+      responses:
+        '201': {description: Pending Owner review created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/agent/objects/{object_id}/revision-proposals:
+    post:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Propose a template-governed Agent Asset V4 or compatible V3 revision
+      description: Requires memory.propose and the object project grant. Template-governed V4 and compatible governed V3 assets are accepted. The server recomputes the matching template validation; current_revision does not move and Owner approval remains separate.
+      parameters:
+        - {name: object_id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/AssetRevisionProposal'}}}
+      responses:
+        '201': {description: Pending immutable revision review created}
+        '400': {description: Object type is not template-governed Agent Asset V4 or compatible governed V3}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {description: Stale expected_revision or conflicting proposal}
+  /v1/agent/project-records:
+    post:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Create a project goal, decision or risk
+      description: Requires project.write. Source Evidence must belong to the same project.
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/ProjectRecord'}}}
+      responses:
+        '201': {description: Project record created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/agent/finance-entries:
+    post:
+      tags: [Agent]
+      security: [{agentBearer: []}]
+      summary: Append an idempotent finance entry
+      description: Requires finance.write and a project grant. Amount is a signed integer in minor units.
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/FinanceWrite'}}}
+      responses:
+        '200': {description: Idempotent duplicate}
+        '201': {description: Finance entry created}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /v1/blueprints:
+    get:
+      tags: [Owner]
+      summary: List immutable Memory Blueprint versions
+      responses: {'200': {description: Published Blueprint versions}}
+    post:
+      tags: [Owner]
+      summary: Publish an immutable Memory Blueprint version
+      responses: {'201': {description: Published Blueprint}, '409': {description: Version already exists with different content}}
+  /v1/blueprints/validate:
+    post:
+      tags: [Owner]
+      summary: Validate a Memory Blueprint definition without publishing
+      responses: {'200': {description: Valid definition}, '422': {description: Invalid definition and error list}}
+  /v1/projects/{project_id}/blueprint:
+    get:
+      tags: [Owner]
+      summary: Read the effective project Blueprint
+      parameters:
+        - {$ref: '#/components/parameters/ProjectPath'}
+      responses: {'200': {description: Assignment, exact Blueprint and validation}}
+    put:
+      tags: [Owner]
+      summary: Activate an exact Blueprint ID and version for the project
+      parameters:
+        - {$ref: '#/components/parameters/ProjectPath'}
+      responses: {'200': {description: Activated assignment}, '400': {description: Invalid plugin or project capability state}}
+  /v1/agents:
+    get:
+      tags: [Owner]
+      summary: List local Agent principals without tokens
+      responses: {'200': {description: Principal list and allowed permissions}}
+    post:
+      tags: [Owner]
+      summary: Create an Agent and return its token once
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/AgentCreate'}}}
+      responses: {'201': {description: Principal and one-time token}}
+  /v1/agents/{agent_id}:
+    patch:
+      tags: [Owner]
+      summary: Replace status, permissions and project grants
+      parameters:
+        - {name: agent_id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/AgentUpdate'}}}
+      responses: {'200': {description: Updated principal}}
+  /v1/agents/{agent_id}/rotate-token:
+    post:
+      tags: [Owner]
+      summary: Invalidate the old token and return a replacement once
+      parameters:
+        - {name: agent_id, in: path, required: true, schema: {type: string}}
+      responses: {'200': {description: Principal and replacement token}}
+  /v1/agent-audit:
+    get:
+      tags: [Owner]
+      summary: Read recent Agent access events
+      parameters:
+        - {name: agent_id, in: query, schema: {type: string}}
+      responses: {'200': {description: Audit events}}
+  /v1/model/config:
+    get:
+      tags: [Owner]
+      summary: Read redacted provider and runtime configuration
+      responses: {'200': {description: Runtime, providers, presets and privacy notice}}
+  /v1/model/providers:
+    post:
+      tags: [Owner]
+      summary: Create a model provider
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/ProviderInput'}}}
+      responses: {'201': {description: Redacted provider}}
+  /v1/model/providers/{provider_id}:
+    patch:
+      tags: [Owner]
+      summary: Update a model provider
+      parameters:
+        - {name: provider_id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/ProviderInput'}}}
+      responses: {'200': {description: Redacted provider}}
+  /v1/model/providers/{provider_id}/test:
+    post:
+      tags: [Owner]
+      summary: Authenticate and inspect the compatible models endpoint
+      parameters:
+        - {name: provider_id, in: path, required: true, schema: {type: string}}
+      responses: {'200': {description: Probe result}, '502': {description: Provider failed}}
+  /v1/model/runtime:
+    put:
+      tags: [Owner]
+      summary: Select rules or Agent distillation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mode]
+              properties:
+                mode: {type: string, enum: [rules, agent]}
+                active_provider_id: {type: string}
+                fallback_to_rules: {type: boolean, description: Always true in v1.1}
+      responses: {'200': {description: Effective runtime}}
+  /v1/integrations/capabilities:
+    get:
+      tags: [Owner]
+      summary: Read the machine-readable MCP capability manifest
+      responses: {'200': {description: Tool names, modes, permissions, scopes and documentation}}
+components:
+  securitySchemes:
+    agentBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: MemoryOS Agent token
+  parameters:
+    ProjectPath:
+      name: project_id
+      in: path
+      required: true
+      schema: {type: string}
+    TaskPath:
+      name: task_id
+      in: path
+      required: true
+      schema: {type: string}
+    EntryPath:
+      name: entry_id
+      in: path
+      required: true
+      schema: {type: string}
+  responses:
+    Unauthorized:
+      description: Missing, invalid or disabled Agent token
+      content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}
+    Forbidden:
+      description: Missing permission or project grant
+      content: {application/json: {schema: {$ref: '#/components/schemas/Error'}}}
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: {type: string}
+            message: {type: string}
+    Principal:
+      type: object
+      required: [agent_id, name, kind, status, permissions, all_projects, project_ids]
+      properties:
+        agent_id: {type: string}
+        name: {type: string}
+        kind: {type: string}
+        status: {type: string, enum: [active, disabled]}
+        permissions: {type: array, items: {$ref: '#/components/schemas/Permission'}}
+        all_projects: {type: boolean}
+        project_ids: {type: array, items: {type: string}}
+        created_at: {type: string, format: date-time}
+        updated_at: {type: string, format: date-time}
+        last_used_at: {type: string, format: date-time}
+    Permission:
+      type: string
+      enum: [memory.read, memory.capture, memory.propose, project.read, project.write, finance.read, finance.write, trace.read, context.plan, context.receipt, outcome.report, team.private, team.blackboard.read, team.blackboard.write, team.blackboard.share]
+    AgentCreate:
+      type: object
+      additionalProperties: false
+      required: [name, kind, permissions, all_projects, project_ids]
+      properties:
+        name: {type: string}
+        kind: {type: string}
+        permissions: {type: array, items: {$ref: '#/components/schemas/Permission'}}
+        all_projects: {type: boolean}
+        project_ids: {type: array, items: {type: string}}
+    AgentUpdate:
+      type: object
+      additionalProperties: false
+      required: [status, permissions, all_projects, project_ids]
+      properties:
+        status: {type: string, enum: [active, disabled]}
+        permissions: {type: array, items: {$ref: '#/components/schemas/Permission'}}
+        all_projects: {type: boolean}
+        project_ids: {type: array, items: {type: string}}
+    AgentSearch:
+      type: object
+      additionalProperties: false
+      required: [project_id, query]
+      properties:
+        project_id: {type: string}
+        query: {type: string}
+        limit: {type: integer, minimum: 1, maximum: 100}
+        source_system: {type: string}
+        session_id: {type: string}
+        date_from: {type: string}
+        date_to: {type: string}
+        neighbor_turns: {type: integer, minimum: 0, maximum: 10}
+        exclude_session_ids: {type: array, items: {type: string}}
+    Recall:
+      type: object
+      additionalProperties: false
+      required: [query]
+      properties:
+        query: {type: string}
+        project_id: {type: string}
+        all_projects: {type: boolean, default: false}
+        kinds: {type: array, items: {type: string, enum: [evidence, episode, memory, asset, project, fact, goal, decision, risk, finance]}}
+        as_of: {type: string, format: date-time}
+        include_history: {type: boolean}
+        limit: {type: integer, minimum: 1, maximum: 100}
+    Capture:
+      type: object
+      additionalProperties: false
+      required: [project_id, idempotency_key, source_system, session_id, text]
+      properties:
+        project_id: {type: string}
+        idempotency_key: {type: string}
+        source_system: {type: string}
+        session_id: {type: string}
+        role: {type: string, enum: [user, assistant, system, tool], default: assistant}
+        text: {type: string}
+        observed_at: {type: string, format: date-time}
+    TeamContribution:
+      type: object
+      additionalProperties: false
+      required: [content, confidence, epistemic_status, ttl_seconds, idempotency_key]
+      properties:
+        content: {type: string, minLength: 1, maxLength: 32000}
+        run_id: {type: string}
+        source_evidence_ids: {type: array, items: {type: string}, maxItems: 200}
+        confidence: {type: number, minimum: 0, maximum: 1}
+        epistemic_status: {type: string, enum: [observed, inferred, hypothesis, disputed]}
+        ttl_seconds: {type: integer, minimum: 60, maximum: 604800}
+        idempotency_key: {type: string, minLength: 1}
+    TeamBlackboardContribution:
+      type: object
+      additionalProperties: false
+      required: [content, topic, claim_key, claim_value, direct_share_agent_ids, confidence, epistemic_status, ttl_seconds, idempotency_key]
+      properties:
+        content: {type: string, minLength: 1, maxLength: 32000}
+        run_id: {type: string}
+        source_evidence_ids: {type: array, items: {type: string}, maxItems: 200}
+        confidence: {type: number, minimum: 0, maximum: 1}
+        epistemic_status: {type: string, enum: [observed, inferred, hypothesis, disputed]}
+        ttl_seconds: {type: integer, minimum: 60, maximum: 604800}
+        idempotency_key: {type: string, minLength: 1}
+        topic: {type: string, minLength: 1, maxLength: 500}
+        claim_key: {type: string, minLength: 1, maxLength: 500}
+        claim_value: {type: string, minLength: 1, maxLength: 4000}
+        direct_share_agent_ids: {type: array, items: {type: string}, maxItems: 100}
+    TeamShare:
+      type: object
+      additionalProperties: false
+      required: [direct_share_agent_ids, idempotency_key]
+      properties:
+        direct_share_agent_ids: {type: array, items: {type: string}, maxItems: 100}
+        idempotency_key: {type: string, minLength: 1}
+    TeamLeaveProposal:
+      type: object
+      additionalProperties: false
+      required: [expected_revision, edit_reason, idempotency_key]
+      properties:
+        expected_revision: {type: integer, minimum: 1}
+        edit_reason: {type: string, minLength: 1}
+        idempotency_key: {type: string, minLength: 1}
+    AssetRevisionProposal:
+      type: object
+      additionalProperties: false
+      required: [expected_revision, edit_reason, payload, idempotency_key]
+      properties:
+        expected_revision: {type: integer, minimum: 1}
+        edit_reason: {type: string, minLength: 1}
+        payload:
+          type: object
+          description: Complete V4 template payload or compatible governed V3 payload. The server ignores client PASS claims and revalidates the matching contract.
+        idempotency_key: {type: string, minLength: 1}
+    ProjectRecord:
+      type: object
+      additionalProperties: false
+      required: [kind, project_id, title]
+      properties:
+        kind: {type: string, enum: [goal, decision, risk]}
+        project_id: {type: string}
+        title: {type: string}
+        description: {type: string}
+        priority: {type: integer, minimum: 0, maximum: 9}
+        target_at: {type: string, format: date-time}
+        decision: {type: string}
+        rationale: {type: string}
+        decided_at: {type: string, format: date-time}
+        probability: {type: integer, minimum: 1, maximum: 5}
+        impact: {type: integer, minimum: 1, maximum: 5}
+        mitigation: {type: string}
+        owner: {type: string}
+        source_evidence_id: {type: string}
+        source_evidence_ids: {type: array, items: {type: string}}
+    FinanceWrite:
+      type: object
+      additionalProperties: false
+      required: [project_id, entry_type, description, amount_minor, currency, occurred_at, idempotency_key]
+      properties:
+        project_id: {type: string}
+        account_id: {type: string}
+        entry_type: {type: string, enum: [income, expense, adjustment]}
+        category: {type: string}
+        description: {type: string}
+        amount_minor: {type: integer}
+        currency: {type: string, minLength: 3, maxLength: 3}
+        occurred_at: {type: string, format: date-time}
+        source_evidence_id: {type: string}
+        idempotency_key: {type: string}
+    ProviderInput:
+      type: object
+      additionalProperties: false
+      required: [name, kind, base_url, model, enabled]
+      properties:
+        name: {type: string}
+        kind: {type: string, enum: [openai, deepseek, openai_compatible]}
+        base_url: {type: string, format: uri}
+        model: {type: string}
+        api_key: {type: string, writeOnly: true}
+        clear_api_key: {type: boolean}
+        enabled: {type: boolean}

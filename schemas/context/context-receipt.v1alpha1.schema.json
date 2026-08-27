@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextReceipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "plan_id",
+    "project_id",
+    "agent_id",
+    "evidence_level",
+    "completeness",
+    "items",
+    "retention",
+    "idempotency_key",
+    "received_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "memory-harness.context-receipt/v1alpha1"
+    },
+    "receipt_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "plan_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "evidence_level": {
+      "enum": [
+        "provider_reported",
+        "harness_observed",
+        "transport_ack"
+      ]
+    },
+    "completeness": {
+      "enum": [
+        "complete",
+        "partial",
+        "unverified"
+      ]
+    },
+    "items": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "required": [
+          "item_id",
+          "status"
+        ],
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "enum": [
+              "delivered",
+              "trimmed",
+              "denied",
+              "failed",
+              "delivery_unverified"
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "content_hash": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "presentation": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "actual_tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "actual_chars": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "compaction": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "detail": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "correlation": {
+      "type": "object",
+      "properties": {
+        "external_runtime": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "external_protocol_version": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "external_thread_id": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "external_turn_id": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "external_item_id": {
+          "type": "string",
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "latency_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "retention": {
+      "type": "object",
+      "required": [
+        "mode",
+        "redaction"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "none",
+            "session",
+            "ttl",
+            "provider_policy"
+          ]
+        },
+        "ttl_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "redaction": {
+          "enum": [
+            "none",
+            "supported",
+            "required",
+            "unknown"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "receipt_hash": {
+      "type": "string",
+      "maxLength": 200
+    }
+  },
+  "additionalProperties": false
+}

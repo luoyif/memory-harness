@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "memoryos:memory-operation:0.1",
+  "title": "MemoryOS Memory Operation",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "operation_id",
+    "type",
+    "status",
+    "created_at",
+    "reason_codes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "operation_id": {
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "CAPTURE",
+        "EXTRACT",
+        "CREATE",
+        "CORROBORATE",
+        "REFINE",
+        "CORRECT",
+        "SUPERSEDE",
+        "REINFORCE",
+        "DECAY",
+        "EXPIRE",
+        "DEPRECATE",
+        "CONSOLIDATE",
+        "PROMOTE",
+        "SOFT_FORGET",
+        "HARD_DELETE"
+      ]
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "auto_authorized",
+        "review_required",
+        "approved",
+        "rejected",
+        "applied",
+        "failed",
+        "rolled_back"
+      ]
+    },
+    "target_memory_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "patch": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "risk_tier": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "decided_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "applied_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "reviewed_by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rollback_of": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

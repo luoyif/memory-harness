@@ -1,0 +1,4 @@
+interface:
+  display_name: "MemoryOS Agent"
+  short_description: "Use project-scoped local memory through governed MCP read and write tools"
+  default_prompt: "Use MemoryOS for this task. Discover the granted project first, keep every read and write inside that scope, preserve provenance and idempotency, and never expose credentials or self-approve protected memory."

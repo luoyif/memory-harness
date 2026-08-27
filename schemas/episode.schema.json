@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "memoryos:episode:0.1",
+  "title": "MemoryOS Episode",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["episode_id", "session_id", "source_system", "title", "summary", "status", "evidence_ids", "started_at", "ended_at", "compiler", "revision"],
+  "properties": {
+    "episode_id": {"type": "string", "minLength": 1},
+    "session_id": {"type": "string", "minLength": 1},
+    "source_system": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "summary": {"type": "string", "minLength": 1},
+    "status": {"enum": ["queued", "compiling", "compiled", "failed", "superseded"]},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "started_at": {"type": "string", "format": "date-time"},
+    "ended_at": {"type": "string", "format": "date-time"},
+    "compiler": {"type": "string"},
+    "revision": {"type": "integer", "minimum": 1}
+  }
+}

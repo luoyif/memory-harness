@@ -1,0 +1,22 @@
+{
+  "schema_version": "memory-harness.context-receipt/v1alpha1",
+  "receipt_id": "receipt-fixture-1",
+  "plan_id": "plan-fixture-1",
+  "project_id": "project-inbox",
+  "agent_id": "agent-fixture",
+  "evidence_level": "transport_ack",
+  "completeness": "unverified",
+  "items": [
+    {
+      "item_id": "item-1",
+      "status": "delivery_unverified"
+    }
+  ],
+  "latency_ms": 20,
+  "retention": {
+    "mode": "session",
+    "redaction": "unknown"
+  },
+  "idempotency_key": "fixture-receipt-1",
+  "received_at": "2026-08-22T12:00:01Z"
+}

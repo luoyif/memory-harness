@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContextCapabilitySet",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "capability_set_id",
+    "adapter_id",
+    "runtime",
+    "protocol_version",
+    "transport",
+    "capabilities",
+    "max_context_items",
+    "max_item_bytes",
+    "max_total_bytes",
+    "max_concurrent",
+    "retention"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "memory-harness.context-capability-set/v1alpha1"
+    },
+    "capability_set_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "adapter_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "runtime": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "protocol_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "transport": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "recall",
+          "capture",
+          "pre_turn_injection",
+          "thread_lifecycle",
+          "item_lifecycle",
+          "compaction_hook",
+          "approval_callback",
+          "context_receipt",
+          "outcome_feedback"
+        ]
+      }
+    },
+    "max_context_items": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 256
+    },
+    "max_item_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2097152
+    },
+    "max_total_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2097152
+    },
+    "max_concurrent": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1024
+    },
+    "supports_streaming": {
+      "type": "boolean"
+    },
+    "supports_idempotency": {
+      "type": "boolean"
+    },
+    "retention": {
+      "type": "object",
+      "required": [
+        "mode",
+        "redaction"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "none",
+            "session",
+            "ttl",
+            "provider_policy"
+          ]
+        },
+        "ttl_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "redaction": {
+          "enum": [
+            "none",
+            "supported",
+            "required",
+            "unknown"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "correlation": {
+      "type": "object",
+      "properties": {
+        "external_runtime": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "external_protocol_version": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "external_thread_id": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "external_turn_id": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "external_item_id": {
+          "type": "string",
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

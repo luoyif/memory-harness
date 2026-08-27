@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "memoryos:project:0.3",
+  "title": "MemoryOS Project",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project_id", "slug", "name", "status", "default_currency", "created_at", "updated_at"],
+  "properties": {
+    "project_id": {"type": "string", "minLength": 1},
+    "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,62}$"},
+    "name": {"type": "string", "minLength": 1, "maxLength": 120},
+    "description": {"type": "string", "maxLength": 4000},
+    "status": {"enum": ["active", "paused", "completed", "archived"]},
+    "color": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+    "default_currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+    "budget_minor": {"type": "integer"},
+    "aliases": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  }
+}
+

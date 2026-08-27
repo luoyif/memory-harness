@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "memoryos:finance-entry:0.3",
+  "title": "MemoryOS Project Finance Entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["entry_id", "project_id", "entry_type", "amount_minor", "currency", "occurred_at", "status", "created_at"],
+  "properties": {
+    "entry_id": {"type": "string", "minLength": 1},
+    "project_id": {"type": "string", "minLength": 1},
+    "account_id": {"type": ["string", "null"]},
+    "entry_type": {"enum": ["income", "expense", "transfer", "adjustment"]},
+    "category": {"type": "string", "maxLength": 120},
+    "description": {"type": "string", "minLength": 1, "maxLength": 1000},
+    "amount_minor": {"type": "integer", "not": {"const": 0}},
+    "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "status": {"enum": ["planned", "posted", "void"]},
+    "source_evidence_id": {"type": ["string", "null"]},
+    "idempotency_key": {"type": ["string", "null"]},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}
+

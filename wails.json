@@ -1,0 +1,21 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "Memory Harness",
+  "outputfilename": "Memory Harness",
+  "frontend:dir": "frontend",
+  "frontend:install": "npm install --include=dev --no-audit",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "info": {
+    "companyName": "Memory Harness Lab",
+    "productName": "Memory Harness",
+    "productVersion": "2.2.0",
+    "copyright": "Copyright (c) 2026 Memory Harness contributors",
+    "comments": "Open-source public preview"
+  },
+  "author": {
+    "name": "Memory Harness",
+    "email": ""
+  }
+}

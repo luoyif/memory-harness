@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "memoryos:knowledge-unit:0.1",
+  "title": "MemoryOS Knowledge Unit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["unit_id", "episode_id", "evidence_id", "unit_type", "tier_hint", "statement", "confidence", "risk_tier", "status", "observed_at"],
+  "properties": {
+    "unit_id": {"type": "string", "minLength": 1},
+    "episode_id": {"type": "string", "minLength": 1},
+    "evidence_id": {"type": "string", "minLength": 1},
+    "unit_type": {"enum": ["fact", "identity", "decision", "goal", "state", "outcome", "procedure", "correction"]},
+    "tier_hint": {"enum": ["episodic", "semantic", "procedural", "identity_core"]},
+    "statement": {"type": "string", "minLength": 1},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "risk_tier": {"enum": ["A", "B", "C", "D"]},
+    "status": {"enum": ["candidate", "attached", "consolidated", "review_required", "rejected"]},
+    "scopes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "observed_at": {"type": "string", "format": "date-time"}
+  }
+}

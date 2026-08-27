@@ -1,0 +1,25 @@
+{
+  "schema_version": "memory-harness.outcome-feedback/v1alpha1",
+  "outcome_id": "outcome-fixture-1",
+  "project_id": "project-inbox",
+  "agent_id": "agent-fixture",
+  "run_id": "run-fixture",
+  "plan_id": "plan-fixture-1",
+  "receipt_id": "receipt-fixture-1",
+  "source": "user_feedback",
+  "metrics": [
+    {
+      "name": "task_success",
+      "value": true,
+      "confidence": 0.8
+    }
+  ],
+  "cost": {
+    "tokens": 400,
+    "latency_ms": 1200,
+    "money_minor": 0,
+    "safety_events": 0
+  },
+  "idempotency_key": "fixture-outcome-1",
+  "observed_at": "2026-08-22T12:05:00Z"
+}

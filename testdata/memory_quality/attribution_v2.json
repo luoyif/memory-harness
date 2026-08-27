@@ -1,0 +1,18 @@
+{
+  "schema_version": "memory-harness.quality-fixtures/v1",
+  "purpose": "Regression cases for attribution, temporal resolution and low-information filtering. These are original Memory Harness fixtures, not copied benchmark outputs.",
+  "cases": [
+    {"id":"named_subject","text":"李明说，王芳下周去伦敦参加项目评审会。","expect_subject":"王芳","expect_resolution":"resolved","expect_time":"relative_pending"},
+    {"id":"quoted_assertion","text":"陈晨转述：赵敏认为新定价方案风险过高。","expect_subject":"赵敏","expect_resolution":"resolved"},
+    {"id":"ambiguous_pronoun","text":"他说明天会把方案发过来。","expect_subject":"他","expect_resolution":"ambiguous"},
+    {"id":"first_person_unbound","text":"我准备下个月去上海。","expect_subject":"我","expect_resolution":"unresolved","forbid_owner":true},
+    {"id":"plural_unbound","text":"我们已经决定暂停上线。","expect_subject":"我们","expect_resolution":"unresolved","forbid_owner":true},
+    {"id":"negative_fact","text":"王芳没有批准这次预算调整。","expect_subject":"王芳","expect_polarity":"negative"},
+    {"id":"hypothetical","text":"如果融资到账，项目可能在十月启动。","expect_modality":"hypothetical"},
+    {"id":"correction","text":"更正一下，签约地点不是伦敦，而是曼彻斯特。","expect_type":"correction"},
+    {"id":"procedure","text":"每次发布前必须先完成备份和回滚演练。","expect_type":"procedure"},
+    {"id":"low_information","text":"对对，我懂你的意思。","expect_candidates":0},
+    {"id":"transcription_fragment","text":"然后那个就是就是这个东西可能大概……","expect_candidates":0},
+    {"id":"time_interval","text":"试运行从2026年9月1日持续到2026年9月30日。","expect_time":"resolved","expect_precision":"day"}
+  ]
+}

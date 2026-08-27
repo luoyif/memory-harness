@@ -1,0 +1,2 @@
+*.md whitespace=-trailing-space,-blank-at-eof
+internal/server/web/assets/* -diff -text

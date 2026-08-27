@@ -1,0 +1,31 @@
+{
+  "schema_version": "memory-harness.context-plan/v1alpha1",
+  "plan_id": "plan-fixture-1",
+  "project_id": "project-inbox",
+  "agent_id": "agent-fixture",
+  "request_fingerprint": "sha256:req-fixture",
+  "budget": {
+    "max_tokens": 4096,
+    "max_chars": 12000,
+    "max_latency_ms": 300
+  },
+  "items": [
+    {
+      "item_id": "item-1",
+      "source_kind": "object",
+      "source_id": "obj-fixture",
+      "revision": 2,
+      "content_hash": "sha256:content-fixture",
+      "project_id": "project-inbox",
+      "reason_codes": [
+        "project_scope",
+        "semantic_match"
+      ],
+      "priority": 90,
+      "token_estimate": 180,
+      "presentation": "summary"
+    }
+  ],
+  "idempotency_key": "fixture-plan-1",
+  "created_at": "2026-08-22T12:00:00Z"
+}

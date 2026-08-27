@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#17211d">
+  <title>MemoryOS · 个人记忆与项目经营系统</title>
+  <link rel="stylesheet" href="/ui/style.css?v=1.1.0-agent-access">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-orbit" aria-hidden="true"><i></i></span><div><h1>MemoryOS</h1><p>个人记忆与项目经营</p></div></div>
+      <div class="nav-caption">工作与经营</div>
+      <nav aria-label="主导航">
+        <button type="button" data-page="portfolio"><b>01</b><span>全局经营<small>Portfolio</small></span></button>
+        <button type="button" data-page="project"><b>02</b><span>项目工作台<small>Project Space</small></span></button>
+        <button type="button" data-page="search"><b>03</b><span>统一检索<small>Hybrid Recall</small></span></button>
+        <button type="button" data-page="timeline"><b>04</b><span>时间记忆<small>As-of Timeline</small></span></button>
+      </nav>
+      <div class="nav-caption">记忆与演化</div>
+      <nav aria-label="记忆导航">
+        <button type="button" data-page="overview"><b>05</b><span>记忆生长<small>Six Layers</small></span></button>
+        <button type="button" data-page="episodes"><b>06</b><span>会话复盘<small>Episodes</small></span></button>
+        <button type="button" data-page="memory"><b>07</b><span>长期记忆<small>Memory Records</small></span></button>
+        <button type="button" data-page="assets"><b>08</b><span>能力资产<small>Protected Assets</small></span></button>
+        <button type="button" data-page="review"><b>09</b><span>待你复核<small>Review Gate</small></span><em id="review-count"></em></button>
+      </nav>
+      <div class="nav-caption">来源与系统</div>
+      <nav aria-label="系统导航">
+        <button type="button" data-page="sources"><b>10</b><span>导入与连接<small>Provenance</small></span></button>
+        <button type="button" data-page="control"><b>11</b><span>AI 控制中心<small>Agents & Models</small></span></button>
+        <button type="button" data-page="health"><b>12</b><span>系统健康<small>Integrity</small></span></button>
+      </nav>
+      <div class="sidebar-foot"><span class="status-dot" id="core-dot" aria-hidden="true"></span><div><strong id="core-label">正在连接内核</strong><small id="core-version">—</small></div></div>
+    </aside>
+
+    <main>
+      <div class="workspace-bar">
+        <label for="project-select">当前空间</label>
+        <select id="project-select" aria-label="选择当前项目"><option>正在读取项目…</option></select>
+        <button class="round-button" type="button" id="new-project" aria-label="新建项目">＋</button>
+        <span class="workspace-rule"></span>
+        <button class="search-jump" type="button" id="search-jump"><span>⌕</span> 检索所有记忆 <kbd>⌘ K</kbd></button>
+      </div>
+      <header class="topbar">
+        <div><p class="eyebrow" id="eyebrow">PORTFOLIO MEMORY</p><h2 id="title">全局经营</h2><p class="page-intro" id="page-intro">在项目、记忆和资金之间建立一条可追溯的经营线。</p></div>
+        <div class="topbar-actions"><span id="updated">—</span><button class="ghost-button" type="button" id="refresh">刷新</button><button class="primary-button" type="button" id="quick-add">＋ 新增记录</button><button class="primary-button compact-action" type="button" id="process-all">整理 Evidence</button></div>
+      </header>
+      <section id="content" aria-live="polite"><div class="loading"><span></span>正在读取真实记忆…</div></section>
+    </main>
+  </div>
+
+  <aside class="detail-drawer" id="detail-drawer" aria-hidden="true" aria-label="来源追踪详情"><button class="drawer-close" id="drawer-close" type="button" aria-label="关闭详情">×</button><div id="drawer-content"></div></aside>
+  <div class="drawer-scrim" id="drawer-scrim"></div>
+
+  <dialog id="project-dialog">
+    <form method="dialog" class="import-form" id="project-form">
+      <div class="dialog-head"><div><p class="eyebrow">NEW PROJECT SPACE</p><h3>建立一个独立项目</h3></div><button type="button" data-close-dialog aria-label="关闭">×</button></div>
+      <p class="form-note">每个项目拥有独立的记忆范围、目标、风险和资金账本；跨项目检索只有在你明确选择时才会发生。</p>
+      <div class="form-grid"><label>项目名称<input id="project-name" maxlength="120" placeholder="例如：MemoryOS 产品" required></label><label>短标识<input id="project-slug" maxlength="63" pattern="[a-z0-9][a-z0-9-]*" placeholder="memoryos" required></label><label>默认币种<select id="project-currency"><option>CNY</option><option>USD</option><option>HKD</option><option>EUR</option><option>JPY</option></select></label><label>项目预算（元）<input id="project-budget" type="number" step="0.01" value="0"></label></div>
+      <label>项目说明<textarea id="project-description" rows="4" placeholder="这个项目为什么存在、当前要达成什么"></textarea></label>
+      <label>别名（用逗号分隔）<input id="project-aliases" placeholder="记忆系统, personal memory"></label>
+      <div class="dialog-actions"><button type="button" data-close-dialog class="ghost-button">取消</button><button type="submit" class="primary-button">创建项目</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="record-dialog">
+    <form method="dialog" class="import-form" id="record-form">
+      <div class="dialog-head"><div><p class="eyebrow">PROJECT RECORD</p><h3>新增一条项目记录</h3></div><button type="button" data-close-dialog aria-label="关闭">×</button></div>
+      <label>记录类型<select id="record-kind"><option value="goal">目标</option><option value="milestone">里程碑</option><option value="decision">决策</option><option value="risk">风险</option><option value="fact">时间事实</option><option value="finance">收支</option><option value="account">资金账户</option><option value="context">核心上下文</option><option value="connector">来源连接器</option></select></label>
+      <div id="record-fields"></div>
+      <div class="dialog-actions"><button type="button" data-close-dialog class="ghost-button">取消</button><button type="submit" class="primary-button">保存记录</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="import-dialog">
+    <form method="dialog" class="import-form" id="import-form">
+      <div class="dialog-head"><div><p class="eyebrow">SOURCE ADAPTER</p><h3>导入文本或 Markdown</h3></div><button type="button" data-close-dialog aria-label="关闭">×</button></div>
+      <p class="form-note">内容将先保存为不可变 Evidence，再进入知识点抽取和记忆沉淀。重复导入同一内容不会重复写入。</p>
+      <label>目标项目<select id="import-project"></select></label>
+      <div class="form-grid"><label>来源名称<input id="import-source" value="manual-import" maxlength="64" required></label><label>会话标识<input id="import-session" placeholder="留空自动生成"></label></div>
+      <label>标题<input id="import-title" placeholder="例如：产品设计讨论"></label><label>内容<textarea id="import-text" rows="12" placeholder="粘贴文本或 Markdown…" required></textarea></label>
+      <div class="dialog-actions"><button type="button" data-close-dialog class="ghost-button">取消</button><button type="submit" id="submit-import" class="primary-button">保存并沉淀</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="conversation-dialog">
+    <form method="dialog" class="import-form" id="conversation-form">
+      <div class="dialog-head"><div><p class="eyebrow">HISTORY IMPORT</p><h3>导入 AI 历史会话</h3></div><button type="button" data-close-dialog aria-label="关闭">×</button></div>
+      <p class="form-note">支持 ChatGPT、Claude 与 DeepSeek JSON。系统先预检会话数、消息数和日期范围；原始文件保留在本地，解析结果再进入 Evidence。</p>
+      <div class="form-grid"><label>平台<select id="conversation-format"><option value="chatgpt">ChatGPT</option><option value="claude">Claude</option><option value="deepseek">DeepSeek</option><option value="normalized">标准格式</option></select></label><label>目标项目<select id="conversation-project"></select></label></div>
+      <label>选择 JSON 文件<input id="conversation-file" type="file" accept="application/json,.json" required></label>
+      <div id="conversation-preview" class="import-preview">选择文件后会先进行本地预检。</div>
+      <div class="dialog-actions"><button type="button" data-close-dialog class="ghost-button">取消</button><button type="button" id="preview-conversation" class="ghost-button">预检</button><button type="submit" id="submit-conversation" class="primary-button" disabled>确认导入</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="search-dialog"><form method="dialog" class="search-command" id="search-command-form"><label for="command-query">检索所有记忆</label><div><span>⌕</span><input id="command-query" autocomplete="off" placeholder="输入事实、决策、项目或来源…"><button type="submit">搜索</button></div><small>默认只查当前项目；在检索页可明确切换到全部项目。</small></form></dialog>
+
+  <dialog id="provider-dialog">
+    <form method="dialog" class="import-form" id="provider-form">
+      <div class="dialog-head"><div><p class="eyebrow">MODEL PROVIDER</p><h3 id="provider-dialog-title">配置记忆模型</h3></div><button type="button" data-close-dialog aria-label="关闭">×</button></div>
+      <p class="form-note">API Key 不会进入数据库、日志或接口响应；在 macOS 上保存到系统钥匙串。留空会保留已有密钥。</p>
+      <div class="form-grid"><label>服务类型<select id="provider-kind"><option value="openai">OpenAI</option><option value="deepseek">DeepSeek</option><option value="openai_compatible">OpenAI 兼容 / 本地</option></select></label><label>配置名称<input id="provider-name" maxlength="120" required></label><label>接口地址<input id="provider-base-url" type="url" required></label><label>模型名称<input id="provider-model" required></label></div>
+      <label>API Key<input id="provider-api-key" type="password" autocomplete="new-password" placeholder="留空保留已有密钥"></label>
+      <div class="choice-line"><label><input id="provider-enabled" type="checkbox" checked> 启用这个配置</label><label><input id="provider-clear-key" type="checkbox"> 清除已有密钥</label></div>
+      <div class="dialog-actions"><button type="button" data-close-dialog class="ghost-button">取消</button><button type="submit" class="primary-button">保存配置</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="agent-dialog">
+    <form method="dialog" class="import-form" id="agent-form">
+      <div class="dialog-head"><div><p class="eyebrow">AGENT PRINCIPAL</p><h3 id="agent-dialog-title">接入一个 AI Agent</h3></div><button type="button" data-close-dialog aria-label="关闭">×</button></div>
+      <p class="form-note">每个 Agent 使用独立令牌和最小权限。它只能访问下方明确授权的项目，且不能自行批准受保护记忆。</p>
+      <div class="form-grid"><label>Agent 名称<input id="agent-name" maxlength="120" placeholder="例如：Codex · MemoryOS" required></label><label>客户端类型<select id="agent-kind"><option value="codex">Codex</option><option value="claude-code">Claude Code</option><option value="deepseek-harness">DeepSeek Harness</option><option value="openclaw">OpenClaw</option><option value="custom">其他 MCP 客户端</option></select></label></div>
+      <fieldset class="permission-fieldset"><legend>能力权限</legend><div id="agent-permissions" class="permission-options"></div></fieldset>
+      <fieldset class="permission-fieldset"><legend>可访问项目</legend><label class="all-projects-choice"><input id="agent-all-projects" type="checkbox"> 允许访问现在和未来的全部项目（高权限）</label><div id="agent-project-grants" class="project-grant-options"></div></fieldset>
+      <div class="dialog-actions"><button type="button" data-close-dialog class="ghost-button">取消</button><button type="submit" class="primary-button">保存 Agent</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="token-dialog">
+    <div class="token-sheet"><p class="eyebrow">ONE-TIME CREDENTIAL</p><h3>请立即保存 Agent 令牌</h3><p>关闭后 MemoryOS 无法再次显示这个令牌；如遗失，只能轮换并使旧令牌失效。</p><code id="agent-token-value"></code><div class="dialog-actions"><button type="button" id="copy-agent-token" class="primary-button">复制令牌</button><button type="button" data-close-dialog class="ghost-button">我已保存</button></div></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/ui/app.js?v=1.1.0-agent-access" defer></script>
+</body>
+</html>

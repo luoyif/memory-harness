@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "memoryos:memory-record:0.1",
+  "title": "MemoryOS Memory Record",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "memory_id",
+    "tier",
+    "status",
+    "summary",
+    "source_evidence_ids",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "memory_id": {
+      "type": "string"
+    },
+    "tier": {
+      "enum": [
+        "working",
+        "episodic",
+        "semantic",
+        "procedural",
+        "identity_core"
+      ]
+    },
+    "asset_form": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "domain": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "visibility": {
+      "enum": [
+        "private",
+        "shared",
+        "global",
+        "restricted"
+      ]
+    },
+    "status": {
+      "enum": [
+        "candidate",
+        "active",
+        "corroborated",
+        "superseded",
+        "expired",
+        "deprecated",
+        "consolidated",
+        "soft_forgotten",
+        "conflict"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "body": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_episode_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "importance": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "strength": {
+      "type": "number",
+      "minimum": 0
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "observed_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "valid_from": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "valid_until": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "last_recalled_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "last_reinforced_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "supersedes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "conflicts_with": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "living_asset_ref": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "approval": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OutcomeFeedback",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "outcome_id",
+    "project_id",
+    "agent_id",
+    "run_id",
+    "source",
+    "metrics",
+    "cost",
+    "idempotency_key",
+    "observed_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "memory-harness.outcome-feedback/v1alpha1"
+    },
+    "outcome_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "plan_id": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "receipt_id": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "evaluator_id": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "evaluator_version": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "value",
+          "confidence"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "value": {},
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "cost": {
+      "type": "object",
+      "properties": {
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "latency_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "money_minor": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "safety_events": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifact_refs": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "maxLength": 300
+      }
+    },
+    "correlation": {
+      "type": "object",
+      "properties": {
+        "external_runtime": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "external_protocol_version": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "external_thread_id": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "external_turn_id": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "external_item_id": {
+          "type": "string",
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "outcome_hash": {
+      "type": "string",
+      "maxLength": 200
+    }
+  },
+  "additionalProperties": false
+}

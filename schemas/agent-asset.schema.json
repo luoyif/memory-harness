@@ -1,0 +1,275 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://memoryos.local/schemas/agent-asset.schema.json",
+  "title": "MemoryOS AgentAsset v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "asset_id",
+    "asset_class",
+    "asset_type",
+    "title",
+    "status",
+    "version",
+    "canonical_path",
+    "content_sha256",
+    "scope",
+    "risk_level",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "asset_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "asset_type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,63}$",
+      "description": "Extensible registered type slug. Built-ins include knowledge, project, decision, prompt, skill, rule, constraint, procedure, workflow, tool_recipe, mcp_profile, hook, agent_profile, template, eval_case, schema, reference."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "candidate",
+        "validating",
+        "validated",
+        "approved",
+        "shadow",
+        "active",
+        "superseded",
+        "retired",
+        "rejected",
+        "failed"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "canonical_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "content_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "kind",
+        "id",
+        "visibility"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "global",
+            "domain",
+            "workspace",
+            "repo",
+            "project",
+            "agent",
+            "user",
+            "team"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "visibility": {
+          "enum": [
+            "private",
+            "shared",
+            "global"
+          ]
+        }
+      }
+    },
+    "risk_level": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "source_evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "source_memory_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "derived_from": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "supersedes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "status": {
+          "enum": [
+            "not_run",
+            "running",
+            "passed",
+            "failed",
+            "partial"
+          ]
+        },
+        "suite_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "score": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "report_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "activation": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "mode": {
+          "enum": [
+            "none",
+            "manual",
+            "policy_auto",
+            "shadow"
+          ]
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "deployment_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "activated_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "rollback_to": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "secret_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "References only; never plaintext credentials."
+    },
+    "processor": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prompt_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "policy_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "asset_class": {
+      "enum": [
+        "knowledge",
+        "procedural",
+        "behavioral",
+        "capability",
+        "production",
+        "evaluation"
+      ],
+      "description": "Broad policy/UX class; intentionally small and stable."
+    },
+    "type_registry_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

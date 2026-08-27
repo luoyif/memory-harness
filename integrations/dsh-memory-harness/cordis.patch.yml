@@ -1,0 +1,16 @@
+- insert:
+    - id: memory-harness-bridge
+      name: dsh-memory-harness-bridge
+      config:
+        baseUrl: http://127.0.0.1:19777
+        credentialRef: MEMORYOS_AGENT_TOKEN
+        defaultProjectId: ""
+        projectBindings: {}
+        richContextEnabled: true
+        outcomeEnabled: true
+        recallEnabled: true
+        captureEnabled: true
+        recallLimit: 6
+        richContextMaxItems: 8
+        richContextMaxTokens: 4096
+        richContextMaxChars: 12000
