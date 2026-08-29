@@ -19,7 +19,7 @@ import (
 	"github.com/luoyif/memory-harness/internal/search"
 )
 
-const Version = buildinfo.Version
+var Version = buildinfo.Version
 
 type Server struct {
 	app             *app.App

@@ -1,0 +1,32 @@
+[Unit]
+Description=Memory Harness headless memory and MCP service
+Documentation=https://github.com/luoyif/memory-harness/blob/main/docs/LINUX_SERVER.zh-CN.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=memory-harness
+Group=memory-harness
+EnvironmentFile=-/etc/memory-harness/memory-harness.env
+ExecStart=/usr/local/bin/memoryosd start
+Restart=on-failure
+RestartSec=3s
+TimeoutStopSec=15s
+UMask=0077
+
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/memory-harness
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

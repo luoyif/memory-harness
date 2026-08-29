@@ -23,6 +23,42 @@ jobs:
         run: go vet ./...
       - name: Build MCP companion
         run: go build -trimpath -o /tmp/memoryosd ./cmd/memoryosd
+      - name: Headless Linux runtime smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          runtime_home="$(mktemp -d)"
+          /tmp/memoryosd start --home "$runtime_home" --addr 127.0.0.1:19777 >"$runtime_home/server.log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill -TERM "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+            rm -rf "$runtime_home"
+          }
+          trap cleanup EXIT
+          for attempt in {1..40}; do
+            if curl --fail --silent http://127.0.0.1:19777/health >"$runtime_home/health.json"; then
+              break
+            fi
+            sleep 0.25
+          done
+          grep -q '"status":"ok"' "$runtime_home/health.json"
+          /tmp/memoryosd doctor --home "$runtime_home" --addr 127.0.0.1:19778
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:19777/v1/projects)" = "401"
+          kill -TERM "$server_pid"
+          wait "$server_pid"
+          trap - EXIT
+          rm -rf "$runtime_home"
+      - name: Build Linux server bundles
+        run: ./scripts/build-linux-release.sh 2.2.0 /tmp/linux-release
+      - name: Verify Linux server bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/linux-release
+          sha256sum --check SHA256SUMS-linux.txt
+          test -s Memory-Harness-2.2.0-linux-x64.tar.gz
+          test -s Memory-Harness-2.2.0-linux-arm64.tar.gz
 
   frontend:
     runs-on: ubuntu-latest

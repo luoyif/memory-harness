@@ -6,21 +6,22 @@
 [![CI](https://github.com/luoyif/memory-harness/actions/workflows/ci.yml/badge.svg)](https://github.com/luoyif/memory-harness/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/luoyif/memory-harness)](LICENSE)
 
-[English](#english) · [中文使用手册](docs/USER_GUIDE.zh-CN.md) · [MCP 接入](docs/MCP.md) · [权限说明](docs/PERMISSIONS.md) · [安全说明](SECURITY.md)
+[English](#english) · [中文使用手册](docs/USER_GUIDE.zh-CN.md) · [Linux 服务器部署](docs/LINUX_SERVER.zh-CN.md) · [MCP 接入](docs/MCP.md) · [权限说明](docs/PERMISSIONS.md) · [安全说明](SECURITY.md)
 
 <p align="center">
-  <a href="https://github.com/luoyif/memory-harness/releases/download/v2.2.0/Memory-Harness-2.2.0-product-tour-zh-CN.mp4">
-    <img src="docs/media/video-cover.jpg" width="100%" alt="Memory Harness 2.2.0 两分钟中文功能导览">
-  </a>
+  <video width="100%" controls preload="metadata" poster="docs/media/video-cover.jpg">
+    <source src="https://github.com/luoyif/memory-harness/releases/download/v2.2.0/Memory-Harness-2.2.0-product-tour-zh-CN.mp4" type="video/mp4">
+    当前浏览器不支持内嵌播放，请使用下方的播放入口。
+  </video>
 </p>
 
 <p align="center">
   <a href="https://github.com/luoyif/memory-harness/releases/download/v2.2.0/Memory-Harness-2.2.0-product-tour-zh-CN.mp4">▶ 观看两分钟中文功能导览</a>
   ·
-  <a href="https://github.com/luoyif/memory-harness/releases">下载 Windows / macOS 完整包</a>
+  <a href="https://github.com/luoyif/memory-harness/releases">下载 Windows / macOS / Linux 完整包</a>
 </p>
 
-> 当前版本：**2.2.0 Public Preview**。Windows x64 和 Intel macOS 已有真实运行验收；macOS 安装包包含 Intel 与 Apple Silicon 两种架构，但 Apple Silicon 本轮仅完成结构校验。公开包尚未使用 Apple Developer ID、公证或 Windows Authenticode 签名，系统可能显示安全提示。请先阅读 Release 中的安装说明。
+> 当前版本：**2.2.0 Public Preview**。桌面端提供 macOS Universal 与 Windows x64；Linux 提供不依赖显示器的 x64 与 ARM64 服务包，可由 systemd 开机常驻。公开桌面包尚未使用 Apple Developer ID、公证或 Windows Authenticode 签名，系统可能显示安全提示。请先阅读 Release 中的安装说明。
 
 ## 它解决什么问题
 
@@ -122,8 +123,10 @@
 
 - macOS：`Memory-Harness-2.2.0-macos-universal.zip`
 - Windows x64：`Memory-Harness-2.2.0-windows-x64.zip`
+- Linux x64 服务器：`Memory-Harness-2.2.0-linux-x64.tar.gz`
+- Linux ARM64 服务器：`Memory-Harness-2.2.0-linux-arm64.tar.gz`
 
-完整包同时包含桌面安装程序、`memoryosd` MCP/命令行伴侣、安装说明和 SHA-256。不要只复制应用程序后就期待 MCP 命令自动出现。
+桌面完整包同时包含桌面安装程序、`memoryosd` MCP/命令行伴侣、安装说明和 SHA-256。Linux 包只包含无界面服务、systemd 安装脚本、健康检查与部署说明，不需要 X11、Wayland 或浏览器。不要只复制应用程序后就期待 MCP 命令自动出现。
 
 首次打开后：
 
@@ -135,6 +138,17 @@
 6. 需要 Codex 或其他 AI 时，再到“连接与健康”创建 Agent。
 
 详细步骤见 [中文使用手册](docs/USER_GUIDE.zh-CN.md)。
+
+### Linux 无界面服务器
+
+Linux 服务默认只监听服务器自身的 `127.0.0.1:19777`，不把记忆库直接暴露到公网。解压对应架构的包后运行：
+
+```bash
+sudo ./install.sh
+./healthcheck.sh
+```
+
+安装完成后，Memory Harness 会在后台常驻并随服务器启动。Codex 与其他 Agent 可以在同一台服务器上直接调用 MCP；远程管理请使用 SSH 隧道。完整的安装、迁移、升级、日志和卸载步骤见 [Linux 服务器部署说明](docs/LINUX_SERVER.zh-CN.md)。
 
 ## Codex / MCP 快速接入
 
@@ -212,5 +226,7 @@ Memory Harness is a local-first, programmable and auditable long-term memory wor
 Version 2.2.0 combines SQLite FTS5 BM25, a deterministic 384-dimensional local feature embedding, temporal relevance and recency through reciprocal-rank fusion. The local embedding is dependency-free and rebuildable; it is not presented as a hosted semantic embedding model and does not require a vector database.
 
 Download a platform bundle from [Releases](https://github.com/luoyif/memory-harness/releases). Each 2.2.0 bundle contains the desktop installer, the `memoryosd` MCP companion, instructions and checksums. Windows x64 and Intel macOS are runtime-tested. The macOS binary is universal, but this round does not include real Apple Silicon hardware validation. Public preview artifacts are not Developer ID/notarized or Authenticode-signed.
+
+Headless Linux server bundles are available for x64 and ARM64. They install a loopback-only `memoryosd` systemd service and do not require X11, Wayland or a browser. See the [Linux server deployment guide](docs/LINUX_SERVER.zh-CN.md).
 
 See the [Chinese user guide](docs/USER_GUIDE.zh-CN.md), [MCP guide](docs/MCP.md), [API](docs/API.md) and [security policy](SECURITY.md).
