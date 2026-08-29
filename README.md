@@ -9,10 +9,9 @@
 [English](#english) · [中文使用手册](docs/USER_GUIDE.zh-CN.md) · [Linux 服务器部署](docs/LINUX_SERVER.zh-CN.md) · [MCP 接入](docs/MCP.md) · [权限说明](docs/PERMISSIONS.md) · [安全说明](SECURITY.md)
 
 <p align="center">
-  <video width="100%" controls preload="metadata" poster="docs/media/video-cover.jpg">
-    <source src="https://github.com/luoyif/memory-harness/releases/download/v2.2.0/Memory-Harness-2.2.0-product-tour-zh-CN.mp4" type="video/mp4">
-    当前浏览器不支持内嵌播放，请使用下方的播放入口。
-  </video>
+  <a href="https://github.com/luoyif/memory-harness/releases/download/v2.2.0/Memory-Harness-2.2.0-product-tour-zh-CN.mp4">
+    <img src="docs/media/video-cover.jpg" width="100%" alt="Memory Harness 2.2.0 两分钟中文功能导览">
+  </a>
 </p>
 
 <p align="center">
