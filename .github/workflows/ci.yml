@@ -60,6 +60,45 @@ jobs:
           test -s Memory-Harness-2.2.0-linux-x64.tar.gz
           test -s Memory-Harness-2.2.0-linux-arm64.tar.gz
 
+  linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Build native ARM64 service
+        run: |
+          test "$(go env GOARCH)" = "arm64"
+          go build -trimpath -o /tmp/memoryosd ./cmd/memoryosd
+          /tmp/memoryosd version
+      - name: Start native ARM64 service
+        shell: bash
+        run: |
+          set -euo pipefail
+          runtime_home="$(mktemp -d)"
+          /tmp/memoryosd start --home "$runtime_home" --addr 127.0.0.1:19777 >"$runtime_home/server.log" 2>&1 &
+          server_pid=$!
+          cleanup() {
+            kill -TERM "$server_pid" 2>/dev/null || true
+            wait "$server_pid" 2>/dev/null || true
+            rm -rf "$runtime_home"
+          }
+          trap cleanup EXIT
+          for attempt in {1..40}; do
+            if curl --fail --silent http://127.0.0.1:19777/health >"$runtime_home/health.json"; then
+              break
+            fi
+            sleep 0.25
+          done
+          grep -q '"status":"ok"' "$runtime_home/health.json"
+          /tmp/memoryosd doctor --home "$runtime_home" --addr 127.0.0.1:19778
+          kill -TERM "$server_pid"
+          wait "$server_pid"
+          trap - EXIT
+          rm -rf "$runtime_home"
+
   frontend:
     runs-on: ubuntu-latest
     defaults:
