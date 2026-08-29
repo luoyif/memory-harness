@@ -59,6 +59,20 @@ jobs:
           sha256sum --check SHA256SUMS-linux.txt
           test -s Memory-Harness-2.2.0-linux-x64.tar.gz
           test -s Memory-Harness-2.2.0-linux-arm64.tar.gz
+      - name: Install and run x64 systemd service
+        shell: bash
+        run: |
+          set -euo pipefail
+          install_test="$(mktemp -d)"
+          tar -xzf /tmp/linux-release/Memory-Harness-2.2.0-linux-x64.tar.gz -C "$install_test"
+          cd "$install_test/Memory-Harness-2.2.0-linux-x64"
+          sudo ./install.sh --no-start
+          sudo systemctl start memory-harness.service
+          ./healthcheck.sh
+          sudo systemctl is-active --quiet memory-harness.service
+          sudo systemctl is-enabled --quiet memory-harness.service
+          sudo ./uninstall.sh
+          test ! -e /usr/local/bin/memoryosd
 
   linux-arm64:
     runs-on: ubuntu-24.04-arm
