@@ -9,11 +9,26 @@ if [[ -r /etc/memory-harness/memory-harness.env ]]; then
   fi
 fi
 
+check_url="http://$addr/health"
 if command -v curl >/dev/null 2>&1; then
-  curl --fail --silent --show-error "http://$addr/health"
+  for attempt in {1..40}; do
+    if response="$(curl --fail --silent "$check_url" 2>/dev/null)"; then
+      printf '%s\n' "$response"
+      exit 0
+    fi
+    sleep 0.25
+  done
+  curl --fail --silent --show-error "$check_url"
   printf '\n'
 elif command -v wget >/dev/null 2>&1; then
-  wget -qO- "http://$addr/health"
+  for attempt in {1..40}; do
+    if response="$(wget -qO- "$check_url" 2>/dev/null)"; then
+      printf '%s\n' "$response"
+      exit 0
+    fi
+    sleep 0.25
+  done
+  wget -O- "$check_url"
   printf '\n'
 else
   echo "curl or wget is required for this health check" >&2
